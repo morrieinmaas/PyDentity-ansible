@@ -1,0 +1,21 @@
+---
+# Usage:
+# with user/password: ansible-palybook pydentity-playbook.yml -i hosts --extra-vars "ansible_user=root ansible_password='mypassword'" -e @vars/host_vars.yml -v
+# with ssh-keyfile: ansible-playbook pydentity-playbook.yml -i hosts --extra-vars "ansible_user=sshuser" -e @vars/host_vars.yml --key-file ~/.ssh/id_rsa_private_key
+- hosts: eu-west-linode
+  pre_tasks:
+    - name: collect facts about system
+      service_facts:
+  roles:
+    - role: common
+      become: yes
+      vars:
+        username: "{{ remote_vars.username }}"
+        user_password: "{{ remote_vars.user_password }}"
+    - role: docker
+      become: yes
+      vars:
+        username: "{{ remote_vars.username }}"
+    - role: pydentity
+      vars:
+        username: "{{ remote_vars.username }}"

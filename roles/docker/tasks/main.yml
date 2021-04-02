@@ -1,0 +1,40 @@
+# Setup docker
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+- name: Add Docker GPG apt Key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt: update_cache=yes name={{ item }} state=latest
+  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io' ]
+
+- name: Install Docker Module for Python
+  ansible.builtin.pip:
+    name: docker
+
+- name: Let a user run docker without sudo
+  become: yes
+  user:
+    name: "{{ username }}"
+    groups: docker
+    append: yes
+    state: present
+
+- name: Ensure docker deamon is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Ensure docker deamon is enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
