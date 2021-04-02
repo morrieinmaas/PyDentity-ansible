@@ -1,0 +1,17 @@
+# Setup pydentity
+- name: Install docker-compose
+  apt:
+    name: docker-compose
+    state: present
+
+- name: Extract source-2-image tar from remote
+  ansible.builtin.unarchive:
+    src: https://github.com/openshift/source-to-image/releases/download/v1.3.1/source-to-image-v1.3.1-a5a77147-linux-amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: 0777
+
+- name: Clone PyDentity repo
+  ansible.builtin.git:
+    repo: 'https://github.com/OpenMined/PyDentity.git'
+    dest: ~/PyDentity

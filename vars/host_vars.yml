@@ -1,0 +1,4 @@
+remote_vars:
+  username: pydentity
+  user_password: password
+  user_pub_key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID9QhpLtDzsLzHaeK1G+OzKFbDIxE7hSmglLM5Sonz5b motechnix@gmail.com'
