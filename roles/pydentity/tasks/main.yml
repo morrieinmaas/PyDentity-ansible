@@ -14,4 +14,4 @@
 - name: Clone PyDentity repo
   ansible.builtin.git:
     repo: 'https://github.com/OpenMined/PyDentity.git'
-    dest: ~/PyDentity
+    dest: /home/{{ username }}/PyDentity

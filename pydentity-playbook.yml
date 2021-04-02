@@ -11,10 +11,11 @@
       become: yes
       vars:
         username: "{{ remote_vars.username }}"
-        pubkey_name: "{{ remote_vars.pubkey_name }}"
         user_password: "{{ remote_vars.user_password }}"
     - role: docker
       become: yes
       vars:
         username: "{{ remote_vars.username }}"
     - role: pydentity
+      vars:
+        username: "{{ remote_vars.username }}"
