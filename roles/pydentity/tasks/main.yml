@@ -5,7 +5,7 @@
     state: present
 
 - name: Extract source-2-image tar from remote
-  ansible.builtin.unarchive:
+  unarchive:
     src: https://github.com/openshift/source-to-image/releases/download/v1.3.1/source-to-image-v1.3.1-a5a77147-linux-amd64.tar.gz
     dest: /usr/local/bin
     remote_src: yes

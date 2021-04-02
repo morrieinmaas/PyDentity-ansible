@@ -11,7 +11,7 @@
       become: yes
       vars:
         username: "{{ remote_vars.username }}"
-        user_pub_key: "{{ remote_vars.user_pub_key }}"
+        pubkey_name: "{{ remote_vars.pubkey_name }}"
         user_password: "{{ remote_vars.user_password }}"
     - role: docker
       become: yes

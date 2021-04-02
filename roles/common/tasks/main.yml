@@ -12,17 +12,16 @@
   apt:
     name: neovim
     state: present
+  
+- name: Install gtar
+  apt:
+    name: tar
+    state: present
 
 - name: Install git
   apt:
     name: git
     state: present
-
-- name: Set up authorised ssh key
-  authorized_key:
-    user: "{{ username }}"
-    state: present
-    key: "{{ user_pub_key }}"
 
 - name: Ensure group "wheel" exists
   group:
@@ -40,13 +39,27 @@
     state: present
 
 - name: Create non-root sudo user
-  user: "{{ username }}"
-  password: "{{ user_password }}"
-  shell: /bin/bash
-  groups:
-    - wheel
-    - sudo
-    - docker
+  user: 
+    name: "{{ username }}"
+    password: "{{ user_password }}"
+    shell: /bin/bash
+    groups:
+      - wheel
+      - sudo
+      - docker
+
+# - name: Set authorized key taken from file
+#   ansible.posix.authorized_key:
+#     user: "{{ username }}"
+#     state: present
+#     key: "{{ lookup('file', '/root/.ssh/authorized_keys') }}"
+
+- name: Set up authorised ssh key for user
+  ansible.builtin.shell: |
+    mkdir -p /home/{{ username }}/.ssh
+    cp /root/.ssh/authorized_keys /home/{{ username }}/.ssh/authorized_keys
+    chmod 0755 /home/{{ username }}/.ssh/authorized_keys
+  become: yes
 
 - name: Allow 'wheel' group users to use passwordless sudo
   lineinfile:
@@ -54,13 +67,13 @@
     state: present
     regexp: '^%wheel'
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
-    become: yes
 
-- name: allow or disallow password authentication
+- name: Disallow password authentication
   lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: '^PasswordAuthentication'
     line: 'PasswordAuthentication no'
+    state: present
     backup: yes
 
 - name: disable root login
@@ -68,16 +81,12 @@
     dest: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin'
     line: 'PermitRootLogin no'
+    state: present
     backup: yes
-  notify: restart ssh service
+  notify: restart sshd service
 
 - name: enable ssh service
   ansible.builtin.service:
     name: sshd
+    daemon_reload: yes
     enabled: yes
-
-handlers:
-  - name: restart sshd service
-    ansible.builtin.service:
-      name: sshd
-      state: restarted
